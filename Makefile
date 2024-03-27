@@ -13,6 +13,7 @@ endif
 notebookImageName=$(repository)/quantum-serverless-notebook
 rayNodeImageName=$(repository)/quantum-serverless-ray-node
 gatewayImageName=$(repository)/quantum-serverless-gateway
+proxyImageName=$(repository)/quantum-serverless-proxy
 
 # =============
 # Docker images
@@ -20,8 +21,8 @@ gatewayImageName=$(repository)/quantum-serverless-gateway
 
 build-and-push: build-all push-all
 
-build-all: build-notebook build-ray-node build-gateway
-push-all: push-notebook push-ray-node push-gateway
+build-all: build-notebook build-ray-node build-gateway build-proxy
+push-all: push-notebook push-ray-node push-gateway push-proxy
 
 build-notebook:
 	docker build -t $(notebookImageName):$(version) -f Dockerfile-notebook .
@@ -35,6 +36,9 @@ build-ray-node:
 build-gateway:
 	docker build -t $(gatewayImageName):$(version) -f ./gateway/Dockerfile .
 
+build-proxy:
+	docker build -t $(proxyImageName):$(version) -f ./gateway/proxy/Dockerfile .
+
 push-notebook:
 	docker push $(notebookImageName):$(version)
 
@@ -43,3 +47,6 @@ push-ray-node:
 
 push-gateway:
 	docker push $(gatewayImageName):$(version)
+
+push-proxy:
+	docker push $(proxyImageName):$(version)
