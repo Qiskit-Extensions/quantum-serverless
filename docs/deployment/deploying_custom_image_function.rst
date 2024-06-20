@@ -7,7 +7,7 @@ In this tutorial we will describe how to build custom docker image for function.
 
 In this tutorial we will be following 3 steps to deploy our function with custom docker image:
 
-* implement function template 
+* implement function template
 * define dockerfile, build it and push to registry
 * upload
 
@@ -20,7 +20,7 @@ All of our custom image files will be located in a folder `custom_function`, whi
      /runner.py
      /Dockerfile
 
-First we will implement function entrypoint by following template. All functions with custom docker images must follow same template structure. 
+First we will implement function entrypoint by following template. All functions with custom docker images must follow same template structure.
 
 We need to create class `Runner` and implement `run` method that will be called during invocation of the function and results of the run method will be returned as result of the function.
 
@@ -43,14 +43,14 @@ Let's create `runner.py` file with following content
 
 As a next step let's define and build our custom docker image.
 
-Dockerfile will be extending base serverless node image and adding required packages and structure to it. 
+Dockerfile will be extending base serverless node image and adding required packages and structure to it.
 
 In our simple case it will look something like this
 
 .. code-block::
    :caption: Dockerfile for custom image function.
 
-    FROM icr.io/quantum-public/qiskit-serverless-ray-node:0.12.0-py310
+    FROM icr.io/quantum-public/qiskit-serverless/ray-node:0.12.0-py310
 
     # install all necessary dependencies for your custom image
 
@@ -130,7 +130,7 @@ Function example (runner.py)
 
         target_circuit = pm.run(circuit)
         target_observable = observable.apply_layout(target_circuit.layout)
- 
+
         from qiskit_ibm_runtime import EstimatorV2 as Estimator
         estimator = Estimator(session=session)
         job = estimator.run([(target_circuit, target_observable)])
@@ -143,11 +143,11 @@ Function example (runner.py)
             return custom_function(arguments)
 
 Dockerfile
-	    
+
 .. code-block::
    :caption: Dockerfile
 
-    FROM icr.io/quantum-public/qiskit-serverless-ray-node:0.12.0-py310
+    FROM icr.io/quantum-public/qiskit-serverless/ray-node:0.12.0-py310
 
     # install all necessary dependencies for your custom image
 
@@ -161,7 +161,7 @@ Dockerfile
     USER $RAY_UID
 
 Build container image
-    
+
 .. code-block::
    :caption: Docker build
 
@@ -172,7 +172,7 @@ Build container image
 The build container image need to be tagged and uploaded to the image registory that can be accessible from the gateway
 
 Upload and register function
-    
+
 .. code-block::
    :caption: upload.py
 
@@ -183,14 +183,14 @@ Upload and register function
         token=os.environ.get("GATEWAY_TOKEN", "<TOKEN>"),
         host=os.environ.get("GATEWAY_HOST", "<GATEWAY ADDRESS>"),
     )
-    
+
     help = """
     title: custom-image-function
     description: sample function implemented in a custom image
     arguments:
         service: service created with the accunt information
         circuit: circuit
-        observable: observable 
+        observable: observable
     """
 
     function_with_custom_image = QiskitFunction(
@@ -224,7 +224,7 @@ List all available functions
         print()
 
 Execute Function
-    
+
 .. code-block::
    :caption: usage.py
 
@@ -249,10 +249,3 @@ Execute Function
 
     print(job.result())
     print(job.logs())
-
-
-
-
-
-
-
